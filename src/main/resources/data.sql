@@ -1,0 +1,3 @@
+insert into notice ( id, contents, hits, likes, reg_date, title, deleted) values (1, '내용1', 0, 0, '2021-02-01 01:12:20.000000', '제목1', false);
+insert into notice ( id, contents, hits, likes, reg_date, title, deleted) values (2, '내용2', 0, 0, '2021-02-02 01:12:20.000000', '제목2', false);
+insert into notice ( id, contents, hits, likes, reg_date, title, deleted) values (3, '내용2', 0, 0, '2021-02-03 01:12:20.000000', '제목3', false);
