@@ -21,16 +21,23 @@ public class ResponseMessage {
     ResponseMessageHeader header;
     Object body;
 
-    public static Object fail(String message) {
+    public static ResponseMessage fail(String message) {
+        return fail(message, null);
+    }
+
+    public static ResponseMessage fail(String message, Object data) {
         return ResponseMessage.builder()
                 .header(ResponseMessageHeader.builder()
                         .result(false)
                         .code("")
                         .message(message)
-                        .status(HttpStatus.BAD_REQUEST.value()).build());
+                        .status(HttpStatus.OK.value())
+                        .build())
+                .body(data)
+                .build();
     }
 
-    public static Object success(Optional object) {
+    public static ResponseMessage success(Optional object) {
         return ResponseMessage.builder()
                 .header(ResponseMessageHeader.builder()
                         .result(true)
@@ -41,13 +48,7 @@ public class ResponseMessage {
     }
 
 
-    public static Object success() {
-        return ResponseMessage.builder()
-                .header(ResponseMessageHeader.builder()
-                        .result(true)
-                        .code("")
-                        .message("")
-                        .status(HttpStatus.OK.value()).build())
-                .body(null).build();
+    public static ResponseMessage success() {
+        return success(null);
     }
 }

@@ -354,7 +354,25 @@
 60. 좋아요를 가장 많이 한 사용자 목록(10개) 를 리턴하는 API 작성
 - nativeQuery이용
 - ApiAdminController - bestLikeCount()
-
+61. 게시판 타입을 추가하는 API 작성
+- 동일한 게시판의 제목이 있는 경우 200, false, "이미 동일한 게시판이 존재합니다." 메시지 리턴
+- 게시판 이름은 필수항목에 대한 부분 체크
+- ApiBoardController - addBoardType()
+62. 게시판 타입을 수정하는 API 작성
+- 동일한 게시판의 제목이 있는 경우 200, false, "수정할 이름이 동일한 게시판명 입니다." 메시지 리턴
+- ApiBoardController - updateBoardType()
+63. 게시판 타입을 삭제하는 API 작성
+- 삭제시는 게시글이 있는 경우 삭제 불가능
+- ApiBoardController - deleteBoardType()
+64. 게시판타입 목록을 리턴하는 API 작성
+- ApiBoardController - boardType()
+65. 게시판타입의 사용여부를 설정하는 API 작성
+- ApiBoardController - usingBoardType()
+66. 게시판별 작성된 게시글의 개수를 리턴하는 API 작성
+- 현재 사용가능한 게시판에 대해서 게시글의 개수를 리턴함
+- ApiBoardController - boardTypeCount()
+67. 게시된 게시글을 최상단에 배치하는 API 작성
+- ApiBoardController - boardPostTop()
 
 
 
