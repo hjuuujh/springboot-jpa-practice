@@ -1,6 +1,6 @@
-package com.zerobase.springbootjpapractice.user.model;
+package com.zerobase.springbootjpapractice.common.model;
 
-import com.zerobase.springbootjpapractice.user.entity.User;
+import com.zerobase.springbootjpapractice.board.entity.BoardBadReport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +37,17 @@ public class ResponseMessage {
                 .build();
     }
 
-    public static ResponseMessage success(Optional object) {
+    public static ResponseMessage success(Object object) {
+        return ResponseMessage.builder()
+                .header(ResponseMessageHeader.builder()
+                        .result(true)
+                        .code("")
+                        .message("")
+                        .status(HttpStatus.OK.value()).build())
+                .body(object).build();
+    }
+
+    public static ResponseMessage success(List<BoardBadReport> object) {
         return ResponseMessage.builder()
                 .header(ResponseMessageHeader.builder()
                         .result(true)
@@ -49,6 +59,6 @@ public class ResponseMessage {
 
 
     public static ResponseMessage success() {
-        return success(null);
+        return success(Optional.ofNullable(null));
     }
 }

@@ -373,6 +373,56 @@
 - ApiBoardController - boardTypeCount()
 67. 게시된 게시글을 최상단에 배치하는 API 작성
 - ApiBoardController - boardPostTop()
+68. 게시된 게시글을 최상단에에서 해지하는 API 작성
+- ApiBoardController - boardPostTopClear()
+69. 게시글의 게시기간을 시작일과 종료일로 설정하는 API 작성
+- ApiBoardController - boardPeriod()
+70. 게시글의 조회수를 증가시키는 API를 작성 
+- 동일 사용자 게시글 조회수 증가를 방지하는 로직 추가
+- JWT 인증을 통과한 사용자에 대해서 진행
+- ApiBoardController - boardPeriod()
+71. 게시글의 좋아요 기능 수행하는 API를 작성
+- JWT 인증을 통과한 사용자에 대해서 진행
+- ApiBoardController - boardLike()
+72. 게시글의 좋아요 기능 취소하는 API를 작성
+- JWT 인증을 통과한 사용자에 대해서 진행
+- ApiBoardController - boardUnLike()
+73. 게시된 게시글에 대해 문제가 있는 게시글을 신고하는 기능의 API를 작성
+- JWT 인증을 통과한 사용자에 대해서 진행
+- ApiBoardController - boardBadReport()
+74. 게시글의 신고하기 목록을 조회하는 API를 작성
+- ApiAdminBoardController - badReport()
+75. 게시글의 스크랩을 추가하는 API를 작성
+- ApiBoardScrapController - boardScrap()
+76. 게시글의 스크랩을 삭제하는 API를 작성
+- ApiBoardScrapController - deleteBoardScrap()
+77. 게시글의 북마크를 추가/삭제하는 API를 작성
+- ApiBoardBookmarkController - boardBookmark(), deleteBoardBookmark()
+78. 관심 사용자에 등록하는 API를 작성
+- ApiUserInterestController - interestUser()
+79. 관심 사용자에서 특정 사용자 삭제하는 API를 작성
+- ApiUserInterestController - deleteInterestUser()
+80. 내가 작성한 게시글 목록을 리턴하는 API를 작성
+- ApiUserController - myPost()
+81. 내가 작성한 게시글 코멘트 목록을 리턴하는 API를 작성
+- ApiUserController - myComments()
+82. 사용자의 포인트 정보를 만들고 게시글을 작성할 경우 포인트를 누적하는 API를 작성
+- ApiUserController - userPoint()
+83. 회원 로그인 히스토리 기능을 구현하는 API를 작성
+- AOP 활용
+- ApiLoginController - login()
+84. 회원 로그인시 에러가 발생하는 경우 로그에 기록하는 기능 작성
+- ApiLoginController - login()
+85. AOP의 Around를 이용하여 게시판 상세 조회에 대한 히스토리 기록하는 기능 작성
+- ApiBoardController - detail()
+
+
+
+
+
+
+
+
 
 
 

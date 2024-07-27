@@ -6,12 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResponseMessageHeader {
-    private boolean result;
-    private String message;
-    private String code;
-    private int status;
+@AllArgsConstructor
+public class UserPointInput {
+    private UserPointType userPointType;
 }

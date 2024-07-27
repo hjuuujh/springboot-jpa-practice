@@ -1,5 +1,6 @@
 package com.zerobase.springbootjpapractice.user.controller;
 
+import com.zerobase.springbootjpapractice.common.model.ResponseMessage;
 import com.zerobase.springbootjpapractice.notice.repository.NoticeRepository;
 import com.zerobase.springbootjpapractice.user.entity.User;
 import com.zerobase.springbootjpapractice.user.entity.UserLoginHistory;

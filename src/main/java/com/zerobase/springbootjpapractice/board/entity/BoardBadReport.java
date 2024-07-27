@@ -10,31 +10,28 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Board {
+@Builder
+public class BoardBadReport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn
-    private User user;
+    private long userId;
+    private String userName;
+    private String userEmail;
 
-    @ManyToOne
-    @JoinColumn
-    private BoardType boardType;
+    private long boardId;
+    private long boardUserId;
+    private LocalDateTime boardRegDate;
+    private String boardTitle;
+    private String boardContent;
 
-    private String title;
-    private String content;
-    private LocalDateTime redDate;
-    private LocalDateTime updateDate;
+    private String comment;
+    private LocalDateTime regDate;
 
-    private boolean topYn;
-
-    private LocalDate publishStartDate;
-    private LocalDate publishEndDate;
 }

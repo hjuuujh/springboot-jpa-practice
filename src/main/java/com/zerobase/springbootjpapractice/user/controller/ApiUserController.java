@@ -2,7 +2,13 @@ package com.zerobase.springbootjpapractice.user.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.zerobase.springbootjpapractice.board.entity.Board;
+import com.zerobase.springbootjpapractice.board.entity.BoardComment;
+import com.zerobase.springbootjpapractice.board.model.ServiceResult;
+import com.zerobase.springbootjpapractice.board.service.BoardService;
+import com.zerobase.springbootjpapractice.common.model.ResponseResult;
 import com.zerobase.springbootjpapractice.notice.entity.Notice;
 import com.zerobase.springbootjpapractice.notice.entity.NoticeLike;
 import com.zerobase.springbootjpapractice.notice.model.NoticeResponse;
@@ -15,6 +21,7 @@ import com.zerobase.springbootjpapractice.user.exception.PasswordNotMatchExcepti
 import com.zerobase.springbootjpapractice.user.exception.UserNotFoundException;
 import com.zerobase.springbootjpapractice.user.model.*;
 import com.zerobase.springbootjpapractice.user.repository.UserRepository;
+import com.zerobase.springbootjpapractice.user.service.PointService;
 import com.zerobase.springbootjpapractice.util.JWTUtils;
 import com.zerobase.springbootjpapractice.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +34,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -43,6 +49,8 @@ public class ApiUserController {
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
     private final NoticeLikeRepository noticeLikeRepository;
+    private final BoardService boardService;
+    private final PointService pointService;
 
     @PostMapping("/api/user")
     public ResponseEntity<?> addUserValidation(@RequestBody @Valid UserInput input, Errors errors) {
@@ -341,7 +349,7 @@ public class ApiUserController {
                     .build()
                     .verify(token)
                     .getIssuer();
-        }catch (SignatureVerificationException e){
+        } catch (SignatureVerificationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         User user = userRepository.findByEmail(email)
@@ -362,13 +370,57 @@ public class ApiUserController {
 
     @DeleteMapping("/api/user/login")
     public ResponseEntity<?> removeToken(@RequestHeader("F-TOKEN") String token) {
-        String email="";
+        String email = "";
         try {
             email = JWTUtils.getIssuer(token);
-        }catch (SignatureVerificationException e){
+        } catch (SignatureVerificationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/user/board/post")
+    public ResponseEntity<?> myPost(@RequestHeader("F-TOKEN") String token) {
+
+        String email;
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        List<Board> list = boardService.postList(email);
+
+        return ResponseResult.success(list);
+    }
+
+    @GetMapping("/api/user/board/comment")
+    public ResponseEntity<?> myComments(@RequestHeader("F-TOKEN") String token) {
+        String email;
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        List<BoardComment> list = boardService.commentList(email);
+
+        return ResponseResult.success(list);
+    }
+
+    @PostMapping("/api/user/point")
+    public ResponseEntity<?> userPoint(@RequestHeader("F-TOKEN") String token
+            , @RequestBody UserPointInput input) {
+        String email;
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = pointService.addPoint(email, input);
+
+        return ResponseResult.success(result);
     }
 }
