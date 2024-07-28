@@ -37,4 +37,6 @@ public class Board {
 
     private LocalDate publishStartDate;
     private LocalDate publishEndDate;
+
+    private String replyContents;
 }

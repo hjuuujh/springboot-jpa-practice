@@ -8,6 +8,7 @@ import com.zerobase.springbootjpapractice.board.entity.Board;
 import com.zerobase.springbootjpapractice.board.entity.BoardComment;
 import com.zerobase.springbootjpapractice.board.model.ServiceResult;
 import com.zerobase.springbootjpapractice.board.service.BoardService;
+import com.zerobase.springbootjpapractice.common.exception.BizException;
 import com.zerobase.springbootjpapractice.common.model.ResponseResult;
 import com.zerobase.springbootjpapractice.notice.entity.Notice;
 import com.zerobase.springbootjpapractice.notice.entity.NoticeLike;
@@ -22,6 +23,7 @@ import com.zerobase.springbootjpapractice.user.exception.UserNotFoundException;
 import com.zerobase.springbootjpapractice.user.model.*;
 import com.zerobase.springbootjpapractice.user.repository.UserRepository;
 import com.zerobase.springbootjpapractice.user.service.PointService;
+import com.zerobase.springbootjpapractice.user.service.UserService;
 import com.zerobase.springbootjpapractice.util.JWTUtils;
 import com.zerobase.springbootjpapractice.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,7 @@ public class ApiUserController {
     private final NoticeLikeRepository noticeLikeRepository;
     private final BoardService boardService;
     private final PointService pointService;
+    private final UserService userService;
 
     @PostMapping("/api/user")
     public ResponseEntity<?> addUserValidation(@RequestBody @Valid UserInput input, Errors errors) {
@@ -423,4 +426,26 @@ public class ApiUserController {
 
         return ResponseResult.success(result);
     }
+
+    @PostMapping("/api/public/user")
+    public ResponseEntity<?> addUser(@RequestBody UserInput input) {
+        ServiceResult result = userService.addUser(input);
+        return ResponseResult.result(result);
+    }
+
+    @PostMapping("/api/public/password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid UserPasswordResetInput input
+    ,Errors errors) {
+        if(errors.hasErrors()) {
+            return ResponseResult.fail("입력값이 정확하지 않습니다.", errors.getAllErrors());
+        }
+        ServiceResult result;
+        try {
+            result= userService.resetPassword(input);
+        }catch (BizException e){
+            return ResponseResult.fail(e.getMessage());
+        }
+        return ResponseResult.result(result);
+    }
+
 }

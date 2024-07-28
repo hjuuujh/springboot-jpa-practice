@@ -1,6 +1,8 @@
 package com.zerobase.springbootjpapractice.user.repository;
 
+import com.zerobase.springbootjpapractice.board.model.ServiceResult;
 import com.zerobase.springbootjpapractice.user.entity.User;
+import com.zerobase.springbootjpapractice.user.model.UserInput;
 import com.zerobase.springbootjpapractice.user.model.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserNameAndPhone(String userName, String phone);
 
     Optional<User> findByEmail(String email);
+    Optional<User> findByEmailAndUserName(String email, String userName);
 
     List<User> findByEmailContainsOrPhoneContainsOrUserNameContains(String email, String phone, String username);
 
@@ -26,4 +29,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Query에 * 불가능 alias이용
     @Query("select u from User u where u.regDate between :startDate and :endDate")
     List<User> findByToday(LocalDateTime startDate, LocalDateTime endDate);
+
 }

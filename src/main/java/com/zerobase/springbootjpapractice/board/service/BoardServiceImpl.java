@@ -3,7 +3,10 @@ package com.zerobase.springbootjpapractice.board.service;
 import com.zerobase.springbootjpapractice.board.entity.*;
 import com.zerobase.springbootjpapractice.board.model.*;
 import com.zerobase.springbootjpapractice.board.repository.*;
+import com.zerobase.springbootjpapractice.common.MailComponent;
 import com.zerobase.springbootjpapractice.common.exception.BizException;
+import com.zerobase.springbootjpapractice.mail.entity.MailTemplate;
+import com.zerobase.springbootjpapractice.mail.repository.MailTemplateRepository;
 import com.zerobase.springbootjpapractice.user.entity.User;
 import com.zerobase.springbootjpapractice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +29,9 @@ public class BoardServiceImpl implements BoardService {
     private final BoardScarpRepository boardScarpRepository;
     private final BoardBookmarkRepository bookmarkRepository;
     private final BoardCommentRepository boardCommentRepository;
-
+    private final MailTemplateRepository mailTemplateRepository;
     private final UserRepository userRepository;
+    private final MailComponent mailComponent;
 
     @Override
     public ServiceResult addBoard(BoardTypeInput input) {
@@ -69,7 +73,7 @@ public class BoardServiceImpl implements BoardService {
         }
         BoardType boardType = optionalBoardType.get();
 
-        if(boardRepository.countByBoardType(boardType)>0){
+        if (boardRepository.countByBoardType(boardType) > 0) {
 
             return ServiceResult.fail("삭제할 게시판 타입의 게시글이 존재합니다.");
         }
@@ -106,15 +110,15 @@ public class BoardServiceImpl implements BoardService {
     public ServiceResult setBoardTop(Long id, boolean topYn) {
 
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
         Board board = optionalBoard.get();
-        if(board.isTopYn() == topYn){
-            if(topYn){
+        if (board.isTopYn() == topYn) {
+            if (topYn) {
 
                 return ServiceResult.fail("이미 게시글이 최상단에 배치되어 있습니다.");
-            }else{
+            } else {
                 return ServiceResult.fail("이미 게시글이 최상단 배치가 해제되어 있습니다.");
 
             }
@@ -128,7 +132,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
@@ -143,19 +147,19 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult setBoardHits(Long id, String email) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
         Board board = optionalBoard.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
 
-        if(boardHitsRepository.countByBoardAndUser(board, user)>0){
+        if (boardHitsRepository.countByBoardAndUser(board, user) > 0) {
             return ServiceResult.fail("이미 조회수가 있습니다.");
         }
 
@@ -170,20 +174,20 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult setBoardLike(Long id, String email) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
         Board board = optionalBoard.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
 
         long boardLikeCount = boardLikeRepository.countByBoardAndUser(board, user);
-        if(boardLikeCount>0){
+        if (boardLikeCount > 0) {
             return ServiceResult.fail("이미 좋아요요한 내용이 있습니다.");
         }
 
@@ -199,21 +203,21 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult setBoardUnLike(Long id, String email) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
         Board board = optionalBoard.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
 
         Optional<BoardLike> optionalBoardLike = boardLikeRepository.findByBoardAndUser(board, user);
 
-        if(optionalBoardLike.isEmpty()){
+        if (optionalBoardLike.isEmpty()) {
             return ServiceResult.fail("좋아요한 내용이 없습니다.");
         }
         BoardLike boardLike = optionalBoardLike.get();
@@ -227,14 +231,14 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult addBadReposrt(Long id, String email, BoardBadReportInput input) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
         Board board = optionalBoard.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
@@ -263,14 +267,14 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult scrapBoard(Long id, String email) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
         Board board = optionalBoard.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
@@ -292,18 +296,18 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult removeBoard(Long id, String email) {
         Optional<BoardScrap> optionalBoardScrap = boardScarpRepository.findById(id);
-        if(optionalBoardScrap.isEmpty()){
+        if (optionalBoardScrap.isEmpty()) {
             return ServiceResult.fail("게시글이 존재하지 않습니다.");
         }
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
         BoardScrap boardScrap = optionalBoardScrap.get();
 
-        if(!user.getId().equals(boardScrap.getUser().getId())){
+        if (!user.getId().equals(boardScrap.getUser().getId())) {
             return ServiceResult.fail("본인의 스크랩만 삭제할 수 있습니다.");
         }
 
@@ -311,20 +315,20 @@ public class BoardServiceImpl implements BoardService {
         return ServiceResult.success();
     }
 
-    private String getBoardUrl(long boardId){
+    private String getBoardUrl(long boardId) {
         return String.format("/board/%d", boardId);
     }
 
     @Override
     public ServiceResult addBookmark(Long id, String email) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             return ServiceResult.fail("게시판이 존재하지 않습니다.");
         }
         Board board = optionalBoard.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
@@ -344,18 +348,18 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public ServiceResult removeBookmark(Long id, String email) {
         Optional<BoardBookmark> optionalBoardBookmark = bookmarkRepository.findById(id);
-        if(optionalBoardBookmark.isEmpty()){
+        if (optionalBoardBookmark.isEmpty()) {
             return ServiceResult.fail("게시판이 존재하지 않습니다.");
         }
         BoardBookmark boardBookmark = optionalBoardBookmark.get();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             return ServiceResult.fail("사용자가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
 
-        if(!user.getId().equals(boardBookmark.getUser().getId())){
+        if (!user.getId().equals(boardBookmark.getUser().getId())) {
             return ServiceResult.fail("본인의 북마크만 삭제할 수 있습니다.");
         }
         bookmarkRepository.delete(boardBookmark);
@@ -366,7 +370,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<Board> postList(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             throw new BizException("회원정보가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
@@ -378,7 +382,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<BoardComment> commentList(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             throw new BizException("회원정보가 존재하지 않습니다.");
         }
         User user = optionalUser.get();
@@ -390,10 +394,75 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Board detail(Long id) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
-        if(optionalBoard.isEmpty()){
+        if (optionalBoard.isEmpty()) {
             throw new BizException("게시글이 존재하지 않습니다.");
         }
 
         return optionalBoard.get();
+    }
+
+    @Override
+    public List<Board> list() {
+        return boardRepository.findAll();
+    }
+
+    @Override
+    public ServiceResult add(String email, BoardInput input) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new BizException("회원정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        Optional<BoardType> optionalBoardType = boardTypeRepository.findById(input.getBoardType());
+        if (optionalBoardType.isEmpty()) {
+            return ServiceResult.fail("게시판 정보가 존재하지 않습니다.");
+        }
+        BoardType boardType = optionalBoardType.get();
+        Board board = Board.builder()
+                .user(user)
+                .boardType(boardType)
+                .title(input.getTitle())
+                .content(input.getContent())
+                .redDate(LocalDateTime.now()).build();
+        boardRepository.save(board);
+
+        Optional<MailTemplate> boardAdd = mailTemplateRepository.findByTemplateId("BOARD_ADD");
+        if (boardAdd.isPresent()) {
+            MailTemplate mailTemplate = boardAdd.get();
+            String fromEmail = mailTemplate.getSendEmail();
+            String fromUserName = mailTemplate.getSendUserName();
+            String title = mailTemplate.getTitle().replaceAll("\\{USER_NAME\\}}", user.getUserName());
+            String content = mailTemplate.getContent().replaceAll("\\{USER_NAME\\}", board.getTitle())
+                    .replaceAll("\\{BOARD_CONTENTS\\}", board.getContent());
+            mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUserName(), title, content);
+        }
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult replyBoard(Long id, BoardReplyInput input) {
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (optionalBoard.isEmpty()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+
+        Board board = optionalBoard.get();
+
+        board.setReplyContents(input.getReplyContents());
+        boardRepository.save(board);
+
+        Optional<MailTemplate> boardAdd = mailTemplateRepository.findByTemplateId("BOARD_ADD");
+        if (boardAdd.isPresent()) {
+            MailTemplate mailTemplate = boardAdd.get();
+            String fromEmail = mailTemplate.getSendEmail();
+            String fromUserName = mailTemplate.getSendUserName();
+            String title = mailTemplate.getTitle().replaceAll("\\{USER_NAME\\}}", board.getUser().getUserName());
+            String content = mailTemplate.getContent().replaceAll("\\{USER_NAME\\}", board.getTitle())
+                    .replaceAll("\\{BOARD_CONTENTS\\}", board.getContent())
+                    .replaceAll("\\{BOARD_REPLY_CONTENTS\\}", board.getReplyContents());
+            mailComponent.send(fromEmail, fromUserName, board.getUser().getEmail(), board.getUser().getUserName(), title, content);
+        }
+        return ServiceResult.success();
     }
 }

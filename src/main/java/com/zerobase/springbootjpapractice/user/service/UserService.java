@@ -2,10 +2,7 @@ package com.zerobase.springbootjpapractice.user.service;
 
 import com.zerobase.springbootjpapractice.board.model.ServiceResult;
 import com.zerobase.springbootjpapractice.user.entity.User;
-import com.zerobase.springbootjpapractice.user.model.UserLogCount;
-import com.zerobase.springbootjpapractice.user.model.UserLogin;
-import com.zerobase.springbootjpapractice.user.model.UserNoticeCount;
-import com.zerobase.springbootjpapractice.user.model.UserSummary;
+import com.zerobase.springbootjpapractice.user.model.*;
 
 import java.util.List;
 
@@ -25,5 +22,11 @@ public interface UserService {
     ServiceResult removeInterestUser(String email, Long id);
 
     User login(UserLogin userLogin);
+
+    ServiceResult addUser(UserInput input);
+
+    ServiceResult resetPassword(UserPasswordResetInput input);
+
+    void sendServiceNotice();
 
 }

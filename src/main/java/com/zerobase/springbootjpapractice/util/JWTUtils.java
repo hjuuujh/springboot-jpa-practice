@@ -2,10 +2,13 @@ package com.zerobase.springbootjpapractice.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureGenerationException;
 import com.zerobase.springbootjpapractice.user.entity.User;
 import com.zerobase.springbootjpapractice.user.model.UserLoginToken;
 import lombok.experimental.UtilityClass;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -23,8 +26,8 @@ public class JWTUtils {
                 .getIssuer();
     }
 
-    public static UserLoginToken createToken(User user){
-        if(user == null){
+    public static UserLoginToken createToken(User user) {
+        if (user == null) {
             return null;
         }
         LocalDateTime expiration = LocalDateTime.now().plusMonths(1);
@@ -38,5 +41,17 @@ public class JWTUtils {
         return UserLoginToken.builder()
                 .token(token)
                 .build();
+    }
+
+    private boolean vaildJWT(HttpServletRequest request) {
+        String token = request.getHeader("F-TOKEN");
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        }catch (JWTVerificationException | SignatureGenerationException e){
+            return false;
+        }
+
+        return true;
     }
 }

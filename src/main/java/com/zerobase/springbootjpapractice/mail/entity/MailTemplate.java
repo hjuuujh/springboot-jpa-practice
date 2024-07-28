@@ -1,6 +1,5 @@
-package com.zerobase.springbootjpapractice.user.entity;
+package com.zerobase.springbootjpapractice.mail.entity;
 
-import com.zerobase.springbootjpapractice.user.model.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,26 +12,18 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
-public class User {
+public class MailTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
-    private String email;
-    private String userName;
-    private String password;
-    private String phone;
+    private String templateId;
+    private String title;
+    private String content;
+    private String sendEmail;
+    private String sendUserName;
     private LocalDateTime regDate;
-    private LocalDateTime updateDate;
-    private UserStatus status;
-    private boolean lockYn;
-
-    private boolean passwordResetYn;
-    private String passwordResetKey;
-
 }

@@ -200,4 +200,33 @@ public class ApiBoardController {
         return ResponseResult.success(board);
 
     }
+
+    @GetMapping("/api/board/")
+    public ResponseEntity<?> listBoard(){
+        List<Board> list = boardService.list();
+        return ResponseResult.success(list);
+    }
+
+    @PostMapping("/api/board/")
+    public ResponseEntity<?> addBoard(@RequestHeader("F-TOKEN") String token,
+                                      @RequestBody BoardInput input){
+        String email;
+        try {
+            email = JWTUtils.getIssuer(token);
+        }catch (JWTVerificationException e){
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+        ServiceResult result = boardService.add(email,input);
+        return ResponseResult.success(result);
+    }
+
+    @PostMapping("/api/board/")
+    public ResponseEntity<?> addAndSendEmail(@RequestHeader("F-TOKEN") String token,
+                                      @RequestBody BoardInput input){
+        String email = JWTUtils.getIssuer(token);
+        ServiceResult result = boardService.add(email,input);
+        return ResponseResult.success(result);
+    }
+
+
 }

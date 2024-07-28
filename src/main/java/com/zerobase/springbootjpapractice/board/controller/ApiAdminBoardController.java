@@ -29,5 +29,10 @@ public class ApiAdminBoardController {
         List<BoardBadReport> list = boardService.badReportList();
         return ResponseResult.success(list);
     }
-
+    @PostMapping("/api/admin/board/{id}/reply")
+    public ResponseEntity<?> reply(@PathVariable Long id,
+                                   @RequestBody BoardReplyInput input){
+        ServiceResult result = boardService.replyBoard(id,input);
+        return ResponseResult.success(result);
+    }
 }

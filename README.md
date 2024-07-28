@@ -415,14 +415,53 @@
 - ApiLoginController - login()
 85. AOP의 Around를 이용하여 게시판 상세 조회에 대한 히스토리 기록하는 기능 작성
 - ApiBoardController - detail()
-
-
-
-
-
-
-
-
+86. RestTemplate을 이용한 공공데이터포털의 공공API 연동하여 전국 약국목록을 가져오는 API 작성
+- www.data.go.kr
+- 전국 약국 정보 조회 서비스 키워드 검색 이후 활용 신청후 조회 가능
+- ApiExtraController - pharmacy()
+87. RestTemplate을 이용한 공공데이터포털의 공공API 연동하여 전국 약국목록을 가져오는 API 작성
+- www.data.go.kr
+- 전국 약국 정보 조회 서비스 키워드 검색 이후 활용 신청후 조회 가능
+- 결과 데이터를 모델로 매핑하여 처리
+- ApiExtraController - pharmacy()
+88. RestTemplate을 이용한 공공데이터포털의 공공API 연동하여 전국 약국목록을 가져오는 API 작성
+- www.data.go.kr
+- 전국 약국 정보 조회 서비스 키워드 검색 이후 활용 신청후 조회 가능
+- 시도/구군 단위 검색기능에 대한 구현 추가
+- 결과 데이터를 모델로 매핑하여 처리
+- ApiExtraController - pharmacyWithSearch()
+89. 미세먼지 정보 조회(공공 API)를 통해서 내용을 내리는 API 작성
+- www.data.go.kr
+- xml 형태
+- ApiExtraController - air()
+90. KAKAO OPEN API 활용한 게시글 번역 서비스를 구현하는 API 작성
+- 카카오 개발자 사이트에 앱을통해 가입한 이후
+- 번역 서비스 이용 
+- ApiExtraKakaoController - translate()
+91. NAVER OPEN API 활용한 게시글 번역 서비스를 구현하는 API 작성
+- 네이버 개발자 사이트에서 번역 서비스 이용
+- ApiExtraNaverController - translate()
+92. 인터셉터를 이용하여 API요청에 대한 정보를 log에 기록하는 기능 작성
+- 글목록 API호출 (/api/board)
+- ApiBoardController - listBoard()
+93. 인터셉터를 활용하여 JWT인증이 필요한 API 에 대해 (글쓰기) 토큰 유효성을 검증하는 API 작성
+- 게시글 쓰기 기능 구현 (/api/board)
+- 글쓰기 API 호출시 토큰 유효성 검사
+- ApiBoardController - add()
+94. OPEN API연동시 API 키를 프로퍼티로 설정해 호출하는 API 작성
+- ApiExtraNaverController - translate()
+95. 회원가입시 가입된 회원에게 가입메일을 전송하는 API 작성
+- ApiUserController - addUser()
+96. 비밀번호 초기화를 위해서 이메일로 인증코드 전송하는 API 작성
+- ApiUserController - resetPassword()
+97. 게시판에 글을 작성했을때 사용자에게 작성된 글의 정보를 메일로 전송하는 API 작성
+- ApiBoardController - addAndSendEmail()
+98. 문의 게시판의 글에 답변을 달았을때 메일로 답변 정보를 전송하는 API 작성
+- ApiAdminBoardController - reply()
+99. 스프링 스케쥴러를 이용하여 매일 새벽4시에 로그정보를 삭제하는 기능 작성
+- common/schedule/Scheduler - deleteLog()
+100. 스프링 스케쥴러를 이용해 회원중 가입일이 1년이 도래한 회원들에 대해 서비스 이용내역 통지 메일을 보내는 기능 작성
+- common/schedule/Scheduler - sendServiceNotice()
 
 
 

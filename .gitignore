@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 backofficeDb.mv.db
+
+src/main/resources/application.yml

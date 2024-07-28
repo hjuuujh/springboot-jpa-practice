@@ -1,8 +1,11 @@
 package com.zerobase.springbootjpapractice.user.service;
 
 import com.zerobase.springbootjpapractice.board.model.ServiceResult;
+import com.zerobase.springbootjpapractice.common.MailComponent;
 import com.zerobase.springbootjpapractice.common.exception.BizException;
 import com.zerobase.springbootjpapractice.logs.service.LogService;
+import com.zerobase.springbootjpapractice.mail.entity.MailTemplate;
+import com.zerobase.springbootjpapractice.mail.repository.MailTemplateRepository;
 import com.zerobase.springbootjpapractice.user.entity.User;
 import com.zerobase.springbootjpapractice.user.entity.UserInterest;
 import com.zerobase.springbootjpapractice.user.model.*;
@@ -16,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,8 @@ public class UserServiceImpl implements UserService {
     private final UserCustomRepository userCustomRepository;
     private final UserInterestRepository userInterestRepository;
     private final LogService logService;
+    private final MailComponent mailComponent;
+    private final MailTemplateRepository mailTemplateRepository;
 
     @Override
     public UserSummary getUserStatusCount() {
@@ -128,5 +135,86 @@ public class UserServiceImpl implements UserService {
         logService.add("로그인 시도");
 
         return user;
+    }
+
+    @Override
+    public ServiceResult addUser(UserInput input) {
+        Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
+        if(optionalUser.isEmpty()){
+            throw new BizException("회원정보가 존재하지 않습니다.");
+        }
+        String encryptPassword = PasswordUtils.encryptPassword(input.getPassword());
+        User user = User.builder()
+                .email(input.getEmail())
+                .userName(input.getUserName())
+                .regDate(LocalDateTime.now())
+                .password(encryptPassword)
+                .phone(input.getPhone())
+                .status(UserStatus.USING)
+                .build();
+        userRepository.save(user);
+
+        String fromEmail = "@gmail.com";
+        String fromName = "관리자";
+        String toEmail = input.getEmail();
+        String toName = input.getUserName();
+
+        String title = "회원가입 완료";
+        String content = "회원가입 축하드립니다.";
+
+        mailComponent.send(fromEmail,fromName,toEmail,toName,title,content);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult resetPassword(UserPasswordResetInput input) {
+        Optional<User> optionalUser = userRepository.findByEmailAndUserName(input.getEmail(), input.getUserName());
+        if(optionalUser.isEmpty()){
+            throw new BizException("회원정보가 존재하지 않습니다.");
+        }
+        User user= optionalUser.get();
+
+        String passwordResetKey = UUID.randomUUID().toString();
+
+        user.setPasswordResetYn(true);
+        user.setPasswordResetKey(passwordResetKey);
+        userRepository.save(user);
+
+        String serverUrl ="http://localhost:8080";
+        Optional<MailTemplate> optionalUserResetPassword = mailTemplateRepository.findByTemplateId("USER_RESET_PASSWORD");
+        if(optionalUserResetPassword.isPresent()){
+            MailTemplate mailTemplate = optionalUserResetPassword.get();
+            String fromEmail = mailTemplate.getSendEmail();
+            String fromUserName = mailTemplate.getSendUserName();
+            String title = mailTemplate.getTitle().replaceAll("\\{USER_NAME\\}}", user.getUserName());
+            String content = mailTemplate.getContent().replaceAll("\\{USER_NAME\\}", user.getUserName())
+                    .replaceAll("\\{SERVER_URL\\}", serverUrl)
+                    .replaceAll("\\{RESET_PASSWORD_KEY\\}",passwordResetKey);
+            mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUserName(), title, content);
+        }
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public void sendServiceNotice() {
+        List<User> users = userRepository.findAll()
+                .stream().filter(user -> user.getRegDate().isBefore(LocalDateTime.now().minusYears(1)))
+                .collect(Collectors.toList());
+
+        Optional<MailTemplate> optionalTemplate = mailTemplateRepository.findByTemplateId("USER_SERVICE_NOTICE");
+        if(optionalTemplate.isPresent()){
+            MailTemplate mailTemplate = optionalTemplate.get();
+            String fromEmail = mailTemplate.getSendEmail();
+            String fromUserName = mailTemplate.getSendUserName();
+            users.stream().map(user -> {
+                String title = mailTemplate.getTitle().replaceAll("\\{USER_NAME\\}}", user.getUserName());
+                String content = mailTemplate.getContent();
+                mailComponent.send(fromEmail, fromUserName, user.getEmail(), user.getUserName(), title, content);
+                return true;
+            });
+        }
+
     }
 }
