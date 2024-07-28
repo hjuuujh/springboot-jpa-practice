@@ -354,6 +354,7 @@
 60. 좋아요를 가장 많이 한 사용자 목록(10개) 를 리턴하는 API 작성
 - nativeQuery이용
 - ApiAdminController - bestLikeCount()
+## Ch03 게시판 기능 심화
 61. 게시판 타입을 추가하는 API 작성
 - 동일한 게시판의 제목이 있는 경우 200, false, "이미 동일한 게시판이 존재합니다." 메시지 리턴
 - 게시판 이름은 필수항목에 대한 부분 체크
@@ -408,6 +409,7 @@
 - ApiUserController - myComments()
 82. 사용자의 포인트 정보를 만들고 게시글을 작성할 경우 포인트를 누적하는 API를 작성
 - ApiUserController - userPoint()
+## Ch04 로그인 및 OPEN-API 연동 기능
 83. 회원 로그인 히스토리 기능을 구현하는 API를 작성
 - AOP 활용
 - ApiLoginController - login()
@@ -448,6 +450,7 @@
 - 게시글 쓰기 기능 구현 (/api/board)
 - 글쓰기 API 호출시 토큰 유효성 검사
 - ApiBoardController - add()
+## Ch05 Spring Properties 설정 및 메일 전송 구현
 94. OPEN API연동시 API 키를 프로퍼티로 설정해 호출하는 API 작성
 - ApiExtraNaverController - translate()
 95. 회원가입시 가입된 회원에게 가입메일을 전송하는 API 작성
